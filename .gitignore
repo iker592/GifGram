@@ -1,2 +1,4 @@
 *.pyc
 .DS_Store
+geckodriver.log
+node_modules
