@@ -81,19 +81,14 @@ def processImage(path):
                 new_frame.paste(last_frame)
             
             new_frame.paste(im, (0,0), im.convert('RGBA'))
-            new_frame.save('%s-%d.png' % (''.join(os.path.basename(path).split('.')[:-1]), i), 'PNG')
+            new_frame.save('frames/%s-%d.png' % (''.join(os.path.basename(path).split('.')[:-1]), i), 'PNG')
 
             i += 1
             last_frame = new_frame
             im.seek(im.tell() + 1)
     except EOFError:
         pass
+    return i
 
-
-def main():
-    processImage('source.gif')
+#processImage('source.gif')
     #processImage('bar.gif')
-    
-
-if __name__ == "__main__":
-    main()
