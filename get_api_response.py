@@ -16,10 +16,17 @@ endpoint = "https://api.giphy.com/v1/gifs/search?api_key=lS0mFdGz0h6K8qPVK77kOM2
 
 response = requests.get(endpoint)
 
+# HANDLE EXCEPTIONS (WHICH OCCUR IF THERE IS NO RESPONSE TO A KEYWORD)
 data = response.json()
-pprint(data)
+#pprint(data)
 
-with open("response.txt", "w") as file:
-	file.write(json.dumps(data))
+#with open("response.txt", "w") as file:
+	#file.write(json.dumps(data))
 
+	
+
+#for i in range(0, limit, 1):
+# Get the url of the original gif
+	print(data["data"][i]["images"]["original"]["url"])
+	
 #print("Done")
