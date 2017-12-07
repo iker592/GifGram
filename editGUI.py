@@ -26,15 +26,14 @@ class Window(QWidget):
         self.my_label = QLabel("Top Text: ", self)
         self.my_labelBottom = QLabel("Bottom Text: ", self)
         self.my_labelPick = QLabel("Pick a Filter: ", self)
-        #self.my_labelFilter = QLabel("Search: ", self)
 
         self.my_line_edit = QLineEdit(self)
         self.my_line_edit.setPlaceholderText("Enter some text")
-        self.my_line_edit.setGeometry(QtCore.QRect(260, 380, 113, 25))
+        #self.my_line_edit.setGeometry(QtCore.QRect(0, 0, 0, 0))
 
         self.my_line_editBottom = QLineEdit(self)
         self.my_line_editBottom.setPlaceholderText("Enter some text")
-        self.my_line_edit.setGeometry(QtCore.QRect(260, 380, 113, 25))
+        #self.my_line_editBottom.setGeometry(QtCore.QRect(260, 380, 50, 25))
 
         self.my_combo_box = QComboBox()
         self.my_combo_box.addItems(my_list)
@@ -97,10 +96,16 @@ class Window(QWidget):
             temp = (255-p[0], 255-p[1], 255-p[2])
             new_list.append(temp)
         picture.putdata(new_list)
-        picture = addText.add(picture,top_line_value,bottom_line_value)
+        #print(picture.width)
+        picture = addText.add(picture,top_line_value,bottom_line_value,picture.width,picture.height)
         picture.save("modifiedFrames/newFrame-"+str(i)+".png")
         self.filenames.append("modifiedFrames/newFrame-"+str(i)+".png")
 
+    def noneFilter(self,picture,i,top_line_value,bottom_line_value):
+
+        picture = addText.add(picture,top_line_value,bottom_line_value,picture.width,picture.height)
+        picture.save("modifiedFrames/newFrame-"+str(i)+".png")
+        self.filenames.append("modifiedFrames/newFrame-"+str(i)+".png")
 
     def grayscaleSepia(self,picture,i,top_line_value,bottom_line_value):
         new_list = []
@@ -112,7 +117,7 @@ class Window(QWidget):
             temp = (luminance, luminance, luminance)
             new_list.append(temp)
         picture.putdata(new_list)
-        picture = addText.add(picture,top_line_value,bottom_line_value)
+        picture = addText.add(picture,top_line_value,bottom_line_value,picture.width,picture.height)
         picture.save("modifiedFrames/newFrame-"+str(i)+".png")
         self.filenames.append("modifiedFrames/newFrame-"+str(i)+".png")
         return new_list
@@ -142,7 +147,7 @@ class Window(QWidget):
                 blue_val = int(p[2] * 0.5)
             temp_list.append((red_val, green_val, blue_val))
         picture.putdata(temp_list)
-        picture = addText.add(picture,top_line_value,bottom_line_value)
+        picture = addText.add(picture,top_line_value,bottom_line_value,picture.width,picture.height)
         picture.save("modifiedFrames/newFrame-"+str(i)+".png")
         self.filenames.append("modifiedFrames/newFrame-"+str(i)+".png")
 
@@ -170,7 +175,7 @@ class Window(QWidget):
             new_list.append(temp)
         picture.putdata(new_list)
 
-        picture = addText.add(picture,top_line_value,bottom_line_value)
+        picture = addText.add(picture,top_line_value,bottom_line_value,picture.width,picture.height)
 
         picture.save("modifiedFrames/newFrame-"+str(i)+".png")
         self.filenames.append("modifiedFrames/newFrame-"+str(i)+".png")
@@ -204,6 +209,11 @@ class Window(QWidget):
                     im = Image.open('frames/source-' + str(i) + '.png')
                     self.sepia_tint(im,i,top_line_value,bottom_line_value)
                 toGIF.gifIt(self.filenames)
+            elif my_text == 'None':
+                for i in range(0,numberOfFrames):
+                    im = Image.open('frames/source-' + str(i) + '.png')
+                    self.noneFilter(im,i,top_line_value,bottom_line_value)
+                toGIF.gifIt(self.filenames)
         print("GIF CREATED!!")
 
 #            elif my_text == 'Thumbnail':
@@ -212,10 +222,6 @@ class Window(QWidget):
 #                    im = self.thumbnail(im,i)
 
 
-
 app = QApplication(sys.argv)
 main = Window()
-
 sys.exit(app.exec_())
-
-
