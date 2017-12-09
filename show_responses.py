@@ -17,11 +17,15 @@ import os
 import imageio
 import math
 
+# Author: Albert Jozsa-Kiraly
+# Course: CST 205 - Multimedia Design & Programming
+# Final Project - API Results window
+
 my_key = 'lS0mFdGz0h6K8qPVK77kOM2atN4vQppp'
 
-q = 'marvel comics'
+q = 'otter'
 
-limit = 10
+limit = 5
 
 endpoint = "https://api.giphy.com/v1/gifs/search?api_key=lS0mFdGz0h6K8qPVK77kOM2atN4vQppp&q=" + str(q) + "&limit=" + str(limit) + "&offset=0&rating=G&lang=en"
 
@@ -146,38 +150,8 @@ def analyze_gif(path):
 def construct_gif(list_of_frames, new_name):
 	images = []
 	for file in list_of_frames:
-		#print("FILE:" + str(file))
 		images.append(imageio.imread(file))
-	imageio.mimsave(new_name, images)
-	
-#class ClickableGif(QLabel):
-	#clicked = QtCore.Signal(str)
-	
-	#def__init__(self, image_name):
-	#	super(ClickableGif, self).__init__()
-		
-		
-	#def mouse_press_event(self, event):
-	#	self.clicked.emit(self.objectName())
-	
-	
-def clickable(widget):
-	class Filter(QObject):
-		clicked = pyqtSignal()
-		
-		def eventFilter(self, obj, event):
-		
-			if obj == widget:
-				if event.type() == QEvent.MouseButtonRelease:
-					if obj.rect().contains(event.pos()):
-						self.clicked.emit()
-						return True
-			return False
-	filter = Filter(widget)
-	widget.installEventFilter(filter)
-	return filter.clicked
-			
-			
+	imageio.mimsave(new_name, images)				
 
 class APIResults(QWidget):
 	def __init__(self, parent=None):
@@ -210,8 +184,7 @@ class APIResults(QWidget):
 				row_layout = QHBoxLayout()
 		
 			self.empty_label = QLabel()
-			row_layout.addWidget(self.empty_label)
-		
+			row_layout.addWidget(self.empty_label)		
 		
 			# The number of the image. This helps the user see the number of the image which they wish to modiy.
 			self.number_label = QLabel()
@@ -233,7 +206,6 @@ class APIResults(QWidget):
 			#self.button.setObjectName('./thumbnail_results/result' + str(i) + '.gif')
 			#self.movie_screen.mousePressEvent = self.clicked_gif
 			
-			clickable(self.movie_screen).connect(self.on_click)
 			
 			#self.movie_screen.setText('./thumbnail_results/result' + str(i) + '.gif');
 				
@@ -292,10 +264,8 @@ for i in range(0, limit, 1):
 	# This list will store the list of files that are the thumbnailed frames
 	list_of_frames = []
 	
-	# Iterate through each thumbnailed frame extracted from the current gif, and construct the thumbnailed gif
-	
-	
-	# Get the names of each frame
+	# Iterate through each thumbnailed frame extracted from the current gif, and construct the thumbnailed gif.
+	# Get the names of each frame.
 	for frame_number in range(0, number_of_frames, 1):
 		
 		frame_name = 'frames/result' + str(i) + '-' + str(frame_number) + '.png'
@@ -304,19 +274,11 @@ for i in range(0, limit, 1):
 	
 	# Construct the thumbnailed gif
 	construct_gif(list_of_frames, './thumbnail_results/result' + str(i) + '.gif')
-#thumbnail_results('./api_results/result' + str(0) + '.gif', 0)
-	
-	
-
 
 app = QApplication(sys.argv)
 main = APIResults()
 
-			#main.setGeometry(700, 400, 200, 50)
+#main.setGeometry(700, 400, 200, 50)
 
 main.show()
 sys.exit(app.exec_())
-		
-		
-		
-			
