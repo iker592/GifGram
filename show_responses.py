@@ -19,9 +19,9 @@ import math
 
 my_key = 'lS0mFdGz0h6K8qPVK77kOM2atN4vQppp'
 
-q = 'movies'
+q = 'beach'
 
-limit = 5
+limit = 15
 
 endpoint = "https://api.giphy.com/v1/gifs/search?api_key=lS0mFdGz0h6K8qPVK77kOM2atN4vQppp&q=" + str(q) + "&limit=" + str(limit) + "&offset=0&rating=G&lang=en"
 
@@ -156,38 +156,48 @@ class APIResults(QWidget):
 	def __init__(self, parent=None):
 		QWidget.__init__(self, parent)
 		
-		self.setGeometry(200, 200, 400, 400)
+		self.setGeometry(100, 100, 400, 400)
 		#self.setGeometry(200, 200, size.width(), size.height())
 		self.setWindowTitle("GIF results")
 		
-		#for i in range(0, limit, 1)
-		
 		# Create the layout		
 		main_layout = QVBoxLayout()
-		#main_layout.addWidget(self.movie_screen)	
-		#self.setLayout(main_layout)
 		
-		#size = self.movie.scaledSize()		
+		self.horizontalGroupBox = QGroupBox("")
+		row_layout = QHBoxLayout	
 		
 		for i in range(0, limit, 1):
 		
+			# After every 4th gif, display the next gif in the next row.	
+			# If this is the fourth gif, move to the next row.
+			if i % 5 == 0:
+				
+				self.horizontalGroupBox = QGroupBox("")
+				row_layout = QHBoxLayout()
+		
 			# Set up the label
 			self.movie_screen = QLabel()
-			
+				
 			# Make the label fit the gif
 			self.movie_screen.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 			self.movie_screen.setAlignment(Qt.AlignCenter)
-			
+				
 			# Load the file into a QMovie
 			self.movie = QMovie('./thumbnail_results/result' + str(i) + '.gif', QByteArray(), self)
-			
+				
 			# Add the QMovie object to the label
 			self.movie.setCacheMode(QMovie.CacheAll)
 			self.movie.setSpeed(100)
 			self.movie_screen.setMovie(self.movie)
 			self.movie.start()
+			
+			row_layout.addWidget(self.movie_screen)
+			
+			# After every 4th gif, add the horizontal layout to the main layout
+			if i % 5 == 0:
+				self.horizontalGroupBox.setLayout(row_layout)
+				main_layout.addWidget(self.horizontalGroupBox)
 
-			main_layout.addWidget(self.movie_screen)
 		
 		self.setLayout(main_layout)
 
@@ -195,7 +205,7 @@ class APIResults(QWidget):
 # put the thumbnailed frames together, and show the gif
 download_gifs()
 
-for i in range(0, limit, 1):
+for i in range(0, limit, 1):	
 	
 	number_of_frames = get_frames_from_gif('./api_results/result' + str(i) + '.gif', i)
 	
@@ -204,17 +214,13 @@ for i in range(0, limit, 1):
 	
 	# Iterate through each thumbnailed frame extracted from the current gif, and construct the thumbnailed gif
 	
-	#print("NUMBER OF FRAMES:" + str(number_of_frames))
 	
 	# Get the names of each frame
 	for frame_number in range(0, number_of_frames, 1):
 		
 		frame_name = 'frames/result' + str(i) + '-' + str(frame_number) + '.png'
-		#print("FRAME NAME:" + frame_name)
 		list_of_frames.append(frame_name)
 
-	#print("LIST OF FRAMES:")
-	#print(list_of_frames)
 	
 	# Construct the thumbnailed gif
 	construct_gif(list_of_frames, './thumbnail_results/result' + str(i) + '.gif')
