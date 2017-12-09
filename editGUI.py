@@ -2,17 +2,20 @@ import gifextract
 import toGIF
 import addText
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import *
 
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton,
-                                QLineEdit, QComboBox ,QHBoxLayout, QVBoxLayout)
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QPixmap,QImage
+                                QLineEdit, QComboBox ,QHBoxLayout, QVBoxLayout,QSizePolicy)
+from PyQt5.QtCore import *#pyqtSlot
+from PyQt5.QtGui import *#QPixmap,QImage
 from PIL import Image
 from PIL.ImageQt import ImageQt
 import math
 
 my_list = ["Pick a filter", "Sepia", "Negative", "Grayscale","None"]
+
+
+
 
 class Window(QWidget):
 
@@ -45,6 +48,20 @@ class Window(QWidget):
         self.my_label2 = QLabel(self)
 
 
+        self.movie_screen = QLabel()
+        # Make the label fit the gif
+        self.movie_screen.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.movie_screen.setAlignment(Qt.AlignCenter)
+        # Load the file into a QMovie
+        self.movie = QMovie('source.gif', QByteArray(), self)
+        # Add the QMovie object to the label
+        self.movie.setCacheMode(QMovie.CacheAll)
+        self.movie.setSpeed(100)
+        self.movie_screen.setMovie(self.movie)
+        self.movie.start()
+        #main_layout.addWidget(self.movie_screen)
+
+
         h_layout = QHBoxLayout()
         h_layout.addWidget(self.my_label)
         h_layout.addWidget(self.my_line_edit)
@@ -59,13 +76,16 @@ class Window(QWidget):
         h3_layout.addWidget(self.my_labelPick)
         h3_layout.addWidget(self.my_combo_box)
 
-        v2_layout = QVBoxLayout()
-        v2_layout.addWidget(self.submit_btn)
-        v2_layout.addWidget(self.response_label)
+        self.v2_layout = QVBoxLayout()
+        self.v2_layout.addWidget(self.submit_btn)
+        self.v2_layout.addWidget(self.movie_screen)
 
-        v_layout = QVBoxLayout()
 
-        v_layout.addWidget(self.my_label2)
+
+
+        self.v_layout = QVBoxLayout()
+
+        self.v_layout.addWidget(self.my_label2)
 #        im = Image.open('source-0.png')
 #        im = im.convert("RGBA")
 #        qim = ImageQt(im)
@@ -74,12 +94,12 @@ class Window(QWidget):
 #        self.my_label2.setPixmap(self.my_pixmap)
 #        self.my_label2.setGeometry(380, 50, 500, 500)
 
-        v_layout.addLayout(h_layout)
-        v_layout.addLayout(h2_layout)
-        v_layout.addLayout(h3_layout)
-        v_layout.addLayout(v2_layout)
+        self.v_layout.addLayout(h_layout)
+        self.v_layout.addLayout(h2_layout)
+        self.v_layout.addLayout(h3_layout)
+        self.v_layout.addLayout(self.v2_layout)
 
-        self.setLayout(v_layout)
+        self.setLayout(self.v_layout)
 
         self.my_combo_box.currentIndexChanged.connect(self.update_ui)
         self.submit_btn.clicked.connect(self.on_click)
@@ -215,7 +235,26 @@ class Window(QWidget):
                     self.noneFilter(im,i,top_line_value,bottom_line_value)
                 toGIF.gifIt(self.filenames)
         print("GIF CREATED!!")
+        #self.v2_layout.removeWidget(self.movie_screen)
+        item = self.v2_layout.takeAt(1)
+        item.widget().deleteLater()
 
+
+        self.movie_screen = QLabel()
+        # Make the label fit the gif
+        self.movie_screen.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.movie_screen.setAlignment(Qt.AlignCenter)
+        # Load the file into a QMovie
+        self.movie = QMovie('newGIF.gif', QByteArray(), self)
+        # Add the QMovie object to the label
+        self.movie.setCacheMode(QMovie.CacheAll)
+        self.movie.setSpeed(100)
+        self.movie_screen.setMovie(self.movie)
+        self.movie.start()
+
+        self.v2_layout.addWidget(self.movie_screen)
+        #self.v_layout.addLayout(self.v2_layout)
+        self.setLayout(self.v_layout)
 #            elif my_text == 'Thumbnail':
 #                for i in range(0,numberOfFrames):
 #                    im = Image.open('frames/source-' + str(i) + '.png')
