@@ -89,17 +89,20 @@ class SearchGroupBox(QWidget):
         self.showLogo()
         mainLayout = QVBoxLayout()
         mainLayout.addWidget(self.verticalGroupBox)
-        mainLayout.addWidget(self.h_groupbox)
+        mainLayout.addWidget(self.h_srcgroupbox)
         self.setLayout(mainLayout)
     def create(self, my_key, q, limit, endpoint, response, data):
         #Widgets
-        self.h_groupbox= QGroupBox("SEARCH FOR GIFS")
+        self.h_srcgroupbox= QGroupBox("SEARCH FOR GIFS")
         self.searchbar= QLineEdit(self)
+        self.searchbar.setPlaceholderText("Search Gif Term Here")
         # q= self.searchbar.text()
         self.src_btn = QPushButton("Search",self)
         self.limit_label = QLabel(self)
         self.limit_label.setText("GifGram\u2122 is in alpha stage. Please Wait while GifGram\u2122"" Searches for Gifs. ")
         self.limit_label.setAlignment(Qt.AlignCenter)
+        self.limit_bar = QLineEdit(self)
+        self.limit_bar.setPlaceholderText("Enter Limit Here")
 
         #
         # self.gifgram_logo = QLabel(self)
@@ -108,6 +111,7 @@ class SearchGroupBox(QWidget):
         #Layouts
         h_layout = QHBoxLayout()
         h_layout.addWidget(self.searchbar)
+        h_layout.addWidget(self.limit_bar)
         h_layout.addWidget(self.src_btn)
         #
         v2_layout = QVBoxLayout()
@@ -118,7 +122,7 @@ class SearchGroupBox(QWidget):
         v_layout.addLayout(h_layout)
         v_layout.addLayout(v2_layout)
         ###
-        self.h_groupbox.setLayout(v_layout)
+        self.h_srcgroupbox.setLayout(v_layout)
         self.src_btn.clicked.connect(self.on_click)
     def showLogo(self):
         self.verticalGroupBox = QGroupBox()
