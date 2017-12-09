@@ -19,9 +19,9 @@ import math
 
 my_key = 'lS0mFdGz0h6K8qPVK77kOM2atN4vQppp'
 
-q = 'beach'
+q = 'marvel comics'
 
-limit = 15
+limit = 10
 
 endpoint = "https://api.giphy.com/v1/gifs/search?api_key=lS0mFdGz0h6K8qPVK77kOM2atN4vQppp&q=" + str(q) + "&limit=" + str(limit) + "&offset=0&rating=G&lang=en"
 
@@ -150,7 +150,34 @@ def construct_gif(list_of_frames, new_name):
 		images.append(imageio.imread(file))
 	imageio.mimsave(new_name, images)
 	
+#class ClickableGif(QLabel):
+	#clicked = QtCore.Signal(str)
 	
+	#def__init__(self, image_name):
+	#	super(ClickableGif, self).__init__()
+		
+		
+	#def mouse_press_event(self, event):
+	#	self.clicked.emit(self.objectName())
+	
+	
+def clickable(widget):
+	class Filter(QObject):
+		clicked = pyqtSignal()
+		
+		def eventFilter(self, obj, event):
+		
+			if obj == widget:
+				if event.type() == QEvent.MouseButtonRelease:
+					if obj.rect().contains(event.pos()):
+						self.clicked.emit()
+						return True
+			return False
+	filter = Filter(widget)
+	widget.installEventFilter(filter)
+	return filter.clicked
+			
+			
 
 class APIResults(QWidget):
 	def __init__(self, parent=None):
@@ -166,6 +193,13 @@ class APIResults(QWidget):
 		self.horizontalGroupBox = QGroupBox("")
 		row_layout = QHBoxLayout	
 		
+		self.results_label = QLabel()
+		self.results_label.setText('<h1>Results<h1>')
+		main_layout.addWidget(self.results_label)
+		
+		# This list will keep track of each GIF's number in order. These numbers will be used in the combo box to choose an GIF for modification.
+		image_number_list = []
+		
 		for i in range(0, limit, 1):
 		
 			# After every 4th gif, display the next gif in the next row.	
@@ -175,6 +209,16 @@ class APIResults(QWidget):
 				self.horizontalGroupBox = QGroupBox("")
 				row_layout = QHBoxLayout()
 		
+			self.empty_label = QLabel()
+			row_layout.addWidget(self.empty_label)
+		
+		
+			# The number of the image. This helps the user see the number of the image which they wish to modiy.
+			self.number_label = QLabel()
+			self.number_label.setText('GIF ' + str(i+1) + ':')
+			row_layout.addWidget(self.number_label)		
+			
+			
 			# Set up the label
 			self.movie_screen = QLabel()
 				
@@ -182,24 +226,60 @@ class APIResults(QWidget):
 			self.movie_screen.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 			self.movie_screen.setAlignment(Qt.AlignCenter)
 				
+			self.movie_screen.setObjectName('./thumbnail_results/result' + str(i) + '.gif')	
+			
 			# Load the file into a QMovie
 			self.movie = QMovie('./thumbnail_results/result' + str(i) + '.gif', QByteArray(), self)
+			#self.button.setObjectName('./thumbnail_results/result' + str(i) + '.gif')
+			#self.movie_screen.mousePressEvent = self.clicked_gif
+			
+			clickable(self.movie_screen).connect(self.on_click)
+			
+			#self.movie_screen.setText('./thumbnail_results/result' + str(i) + '.gif');
 				
 			# Add the QMovie object to the label
 			self.movie.setCacheMode(QMovie.CacheAll)
 			self.movie.setSpeed(100)
 			self.movie_screen.setMovie(self.movie)
 			self.movie.start()
+						
+			
+			#self.button.setObjectName('./thumbnail_results/result' + str(i) + '.gif')
+			#self.title.setText('./thumbnail_results/result' + str(i) + '.gif')
+			#row_layout.addWidget(self.title)
+			
+			#print("Name: " + self.movie_screen.objectName())
 			
 			row_layout.addWidget(self.movie_screen)
+			#row_layout.addWidget(self.button)
 			
 			# After every 4th gif, add the horizontal layout to the main layout
 			if i % 5 == 0:
 				self.horizontalGroupBox.setLayout(row_layout)
-				main_layout.addWidget(self.horizontalGroupBox)
-
+				main_layout.addWidget(self.horizontalGroupBox)		
+				
+			image_number_list.append(str(i+1))
+		
+		self.choose_label = QLabel()
+		self.choose_label.setText('Choose the GIF to be modified:')
+		main_layout.addWidget(self.choose_label)
+		
+		# Combo box to choose the number of the image which will be modified
+		self.combo_box = QComboBox()
+		self.combo_box.addItems(image_number_list)
+		main_layout.addWidget(self.combo_box)
+		
+		# This button will be clicked when the number of the image which will be modified is selected from the combo box
+		self.modify_button = QPushButton("Modify")
+		self.modify_button.clicked.connect(self.on_click)
+		main_layout.addWidget(self.modify_button)
 		
 		self.setLayout(main_layout)
+	
+	# This function is called on click to the modify_button
+	@pyqtSlot()
+	def on_click(self):
+		print(self.combo_box.currentText())
 
 # First download each gif returned by the API call, get the frames of each, thumbnail each frame of a gif,
 # put the thumbnailed frames together, and show the gif
