@@ -11,9 +11,9 @@ from itertools import count
 
 my_key = 'lS0mFdGz0h6K8qPVK77kOM2atN4vQppp'
 
-q = 'spider-man'
+q = 'otter'
 
-limit = 2
+limit = 3
 
 endpoint = "https://api.giphy.com/v1/gifs/search?api_key=lS0mFdGz0h6K8qPVK77kOM2atN4vQppp&q=" + str(q) + "&limit=" + str(limit) + "&offset=0&rating=G&lang=en"
 
@@ -35,20 +35,7 @@ data = response.json()
 
 
 
-for i in range(0, limit, 1):
-	
-	
-	# QPixmap object
-	
-	
-	# Get the url of the original gif
-	#print(data["data"][i]["images"]["original"]["url"])
-	
-	gif_url = data["data"][i]["images"]["original"]["url"]
-	
-	gif_to_open = requests.get(gif_url)
-	
-	gif = Image.open(BytesIO(gif_to_open.content))
+
 	
 	# This label will hold the image
 	#image_label = QLabel(window)
@@ -99,11 +86,29 @@ class ImageLabel(tk.Label):
 			self.config(image=self.frames[self.loc])
 			self.after(self.delay, self.next_frame)
 			
-root = tk.Tk()
-label = ImageLabel(root)
-label.pack()
-label.load('test.gif')
-root.mainloop()		
+			
+for i in range(0, limit, 1):
+	
+	
+	# QPixmap object
+	
+	
+	# Get the url of the original gif
+	#print(data["data"][i]["images"]["original"]["url"])
+	
+	gif_url = data["data"][i]["images"]["original"]["url"]
+	
+	gif_to_open = requests.get(gif_url)
+	
+	gif = Image.open(BytesIO(gif_to_open.content))
+			
+	root = tk.Tk()
+	label = ImageLabel(root)
+	label.pack()
+	
+	
+	label.load(gif)
+	root.mainloop()		
 		
 		
 		
