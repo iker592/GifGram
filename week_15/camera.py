@@ -314,6 +314,8 @@ class Camera(QtWidgets.QMainWindow):
 			event.ignore()
 		else:
 			event.accept()
+			
+
 
 
 

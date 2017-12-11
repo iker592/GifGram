@@ -50,7 +50,7 @@ class SearchGroupBox(QWidget):
         self.h_srcgroupbox= QGroupBox("SEARCH FOR GIFS")
         self.searchbar= QLineEdit(self)
         self.searchbar.setPlaceholderText("Search Gif Term Here")
-        self.searchbar.returnPressed()
+        # self.searchbar.returnPressed()
         self.src_btn = QPushButton("Search",self)
         self.limit_label = QLabel(self)
         self.limit_label.setText("GifGram\u2122 is in alpha stage. Please Wait while GifGram\u2122"" Searches for Gifs. ")#\u2122 tm
@@ -87,8 +87,9 @@ class SearchGroupBox(QWidget):
 #################
     @pyqtSlot()
     def on_click(self):
+
         src_btn = self.sender()
-    
+
 #############################
 my_app = QApplication(sys.argv)
 a_window = MyWindow()
@@ -97,7 +98,7 @@ a_window.show()
 #This code below opens camera. It opens in a new window. 
 # Idont know why after I take a pic, the camera widget wont close.
 my_cam = Camera()
-my_cam.show()
+# my_cam.show()
 
 
 sys.exit(my_app.exec_())
