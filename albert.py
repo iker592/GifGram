@@ -89,7 +89,7 @@ def get_frames_from_gif(path, result_number):
 			
 			# Save the thumnail of each frame
 			thumbnail_image = thumbnail(new_frame)			
-			thumbnail_image.save('frames/%s-%d.png' % (''.join(os.path.basename(path).split('.')[:-1]), number_of_frames), 'PNG')
+			thumbnail_image.save('framesThumb/%s-%d.png' % (''.join(os.path.basename(path).split('.')[:-1]), number_of_frames), 'PNG')
 			
 			number_of_frames += 1
 			last_frame = new_frame
@@ -234,7 +234,7 @@ for i in range(0, limit, 1):
 	# Iterate through each thumbnail frame of the current gif, and store the name of the frame.
 	for frame_number in range(0, number_of_frames, 1):
 		
-		frame_name = 'frames/result' + str(i) + '-' + str(frame_number) + '.png'
+		frame_name = 'framesThumb/result' + str(i) + '-' + str(frame_number) + '.png'
 		list_of_frames.append(frame_name)
 		
 	# Construct the thumbnail gif from the frames
