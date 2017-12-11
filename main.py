@@ -16,6 +16,10 @@ import math
 my_list = ["None", "Sepia", "Negative", "Grayscale","Thumbnail"]
 term =""
 
+
+
+
+
 class editWindow(QWidget):
 
     filenames = []
@@ -270,6 +274,8 @@ class MainWindow(QWidget):
         self.submit_btn = QPushButton("Search", self)
         self.submit_btn.clicked.connect(self.update_ui)
         self.v_layout.addWidget(self.submit_btn)
+
+        
         self.setLayout(self.v_layout)
 
 
