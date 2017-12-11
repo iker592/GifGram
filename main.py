@@ -162,6 +162,11 @@ class APIResults(QWidget):
         
 		self.setGeometry(100, 100, 400, 400)
 		self.setWindowTitle("GIF results")
+		
+		self.setAutoFillBackground(True)
+		p = self.palette()
+		p.setColor(self.backgroundRole(), Qt.cyan)
+		self.setPalette(p)
         
         # Create the layout     
 		main_layout = QVBoxLayout()
@@ -326,6 +331,11 @@ class editWindow(QWidget):
 
 		self.my_combo_box.currentIndexChanged.connect(self.update_ui)
 		self.submit_btn.clicked.connect(self.on_click)
+		
+		self.setAutoFillBackground(True)
+		p = self.palette()
+		p.setColor(self.backgroundRole(), Qt.cyan)
+		self.setPalette(p)
 
 		self.setWindowTitle("Edit Window")
 		self.setGeometry(450, 200, 600, 400)
@@ -476,42 +486,38 @@ class editWindow(QWidget):
 
 		self.v2_layout.addWidget(self.movie_screen)
 		self.setLayout(self.v_layout)
+		
 class MainWindow(QWidget):
 	def __init__(self):
 		super().__init__()
-		
-		self.setWindowTitle("GifGram Search Window")
-		self.setGeometry(450, 200, 600, 400)
-		
-		self.main_layout = QVBoxLayout()
-		
-		self.logo_label = QLabel(self)
-		logo = QPixmap("gifgram_logo.png")
-		self.logo_label.setPixmap(logo)
-		self.logo_label.setAlignment(Qt.AlignCenter)
-		
-		self.main_layout.addWidget(self.logo_label)
-		
-		self.search_bar = QLineEdit(self)		
-		self.search_bar.setPlaceholderText("Enter gif term Here")		
-		self.main_layout.addWidget(self.search_bar)
-					
+		self.v_layout = QVBoxLayout()
+		self.picture_label = QLabel(self)
+		my_image = QPixmap("gifgram_logo_big.png")
+		self.picture_label.setPixmap(my_image)
+		self.picture_label.setAlignment(Qt.AlignCenter)
+		self.search_line_edit = QLineEdit(self)
+		self.search_line_edit.setPlaceholderText("Enter some text")
+		self.v_layout.addWidget(self.picture_label)
+		self.v_layout.addWidget(self.search_line_edit)
 		self.submit_btn = QPushButton("Search", self)
-		self.submit_btn.clicked.connect(self.show_results)
-		self.main_layout.addWidget(self.submit_btn)
-
-
-		self.setLayout(self.main_layout)
-
+		self.submit_btn.clicked.connect(self.showResults)
+		self.v_layout.addWidget(self.submit_btn)
+		self.setLayout(self.v_layout)
 
 	@pyqtSlot()
-	def show_results(self):		
-		q = self.search_bar.text()
-		callAPI(q, limit)
+	def showResults(self):
+		q = self.search_line_edit.text()
+		callAPI(q, limit)        
 		self.new_win = APIResults()
 		self.new_win.show()
 
 app = QApplication(sys.argv)
 main = MainWindow()
+main.setAutoFillBackground(True)
+p = main.palette()
+p.setColor(main.backgroundRole(), Qt.cyan)
+main.setPalette(p)
+main.setWindowTitle("GifGram\u2122")
+main.setGeometry(450, 200, 600, 400)
 main.show()
 sys.exit(app.exec_())
