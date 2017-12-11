@@ -14,4 +14,6 @@ To run the program, just enter "py main.py" in PowerShell when in the project fo
 
 Link to GitHub repository: https://github.com/iker592/cst205FinalProjectTeam6
 
+Juan was also working on a feature to capture a gif using the webcam. This feature was in development but it was not fully finished, so it was left out from the master branch. 
+
 Future work: Potential additions to the program could be adding a feature to share the gifs on Twitter or Facebook using the respective APIs. Also, we could make a chat application where users can communicate with gifs. Additionally, the program could have a feature so that the user can record a few minutes of video using their webcam and convert this to a gif (i.e. making a gif). 
