@@ -3,6 +3,7 @@ import toGIF
 import addText
 import sys
 from PyQt5 import *
+import time
 
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton,
                                 QLineEdit, QComboBox ,QHBoxLayout, QVBoxLayout,QSizePolicy)
@@ -12,18 +13,29 @@ from PIL import Image
 from PIL.ImageQt import ImageQt
 import math
 
-my_list = ["Pick a filter", "Sepia", "Negative", "Grayscale","None"]
+my_list = ["None", "Sepia", "Negative", "Grayscale","Thumbnail"]
 
 
-
-
-class Window(QWidget):
+class editWindow(QWidget):
 
     filenames = []
 
     def __init__(self):
         super().__init__()
         self.init_ui()
+
+    def loadGIF(self,fileName):
+        self.movie_screen = QLabel()
+        # Make the label fit the gif
+        self.movie_screen.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.movie_screen.setAlignment(Qt.AlignCenter)
+        # Load the file into a QMovie
+        self.movie = QMovie(fileName, QByteArray(), self)
+        # Add the QMovie object to the label
+        self.movie.setCacheMode(QMovie.CacheAll)
+        self.movie.setSpeed(100)
+        self.movie_screen.setMovie(self.movie)
+        self.movie.start()
 
     def init_ui(self):
         self.my_label = QLabel("Top Text: ", self)
@@ -47,19 +59,9 @@ class Window(QWidget):
 
         self.my_label2 = QLabel(self)
 
-
-        self.movie_screen = QLabel()
-        # Make the label fit the gif
-        self.movie_screen.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.movie_screen.setAlignment(Qt.AlignCenter)
-        # Load the file into a QMovie
-        self.movie = QMovie('source.gif', QByteArray(), self)
-        # Add the QMovie object to the label
-        self.movie.setCacheMode(QMovie.CacheAll)
-        self.movie.setSpeed(100)
-        self.movie_screen.setMovie(self.movie)
-        self.movie.start()
-        #main_layout.addWidget(self.movie_screen)
+#///////////////////////////////////////////////////////////////////////////////////////////
+        self.loadGIF("source.gif")
+#///////////////////////////////////////////////////////////////////////////////////////////
 
 
         h_layout = QHBoxLayout()
@@ -86,13 +88,6 @@ class Window(QWidget):
         self.v_layout = QVBoxLayout()
 
         self.v_layout.addWidget(self.my_label2)
-#        im = Image.open('source-0.png')
-#        im = im.convert("RGBA")
-#        qim = ImageQt(im)
-#        pix = QPixmap.fromImage(qim)  
-#        self.my_pixmap = pix    #QPixmap('images/'+max+'.jpg')
-#        self.my_label2.setPixmap(self.my_pixmap)
-#        self.my_label2.setGeometry(380, 50, 500, 500)
 
         self.v_layout.addLayout(h_layout)
         self.v_layout.addLayout(h2_layout)
@@ -173,18 +168,21 @@ class Window(QWidget):
 
 
 
-#    def thumbnail(self,picture):
-#        s = 2
-#        canvas = Image.new("RGB", (math.ceil(picture.width/s), math.ceil(picture.height/s)), "white")
-#        target_x = 0
-#        for source_x in range(0, picture.width, s):
-#            target_y = 0
-#            for source_y in range(0, picture.height, s):
-#                color = picture.getpixel((source_x, source_y))
-#                canvas.putpixel((target_x, target_y), color)
-#                target_y += 1
-#            target_x += 1
-#        return canvas
+    def thumbnail(self,picture,i,top_line_value,bottom_line_value):
+        s = 2
+        canvas = Image.new("RGB", (math.ceil(picture.width/s), math.ceil(picture.height/s)), "white")
+        target_x = 0
+        for source_x in range(0, picture.width, s):
+            target_y = 0
+            for source_y in range(0, picture.height, s):
+                color = picture.getpixel((source_x, source_y))
+                canvas.putpixel((target_x, target_y), color)
+                target_y += 1
+            target_x += 1
+        picture = addText.add(picture,top_line_value,bottom_line_value,picture.width,picture.height)
+
+        picture.save("modifiedFrames/newFrame-"+str(i)+".png")
+        self.filenames.append("modifiedFrames/newFrame-"+str(i)+".png")
 #############################################################
 
     def grayscale(self,picture,i,top_line_value,bottom_line_value):
@@ -207,9 +205,19 @@ class Window(QWidget):
 
     @pyqtSlot()
     def on_click(self):
+        item = self.v2_layout.takeAt(1)
+        item.widget().deleteLater()
+
+#///////////////////////////////////////////////////////////////////////////////////////////
+        self.loadGIF("loading.gif")
+#///////////////////////////////////////////////////////////////////////////////////////////
+
+        self.v2_layout.addWidget(self.movie_screen)
+        #self.v_layout.addLayout(self.v2_layout)
+        self.setLayout(self.v_layout)
+        #time.sleep(5.5)
         top_line_value = self.my_line_edit.text()
         bottom_line_value = self.my_line_editBottom.text()
-
 
         numberOfFrames = gifextract.processImage('source.gif')
         my_text = self.my_combo_box.currentText()
@@ -234,33 +242,27 @@ class Window(QWidget):
                     im = Image.open('frames/source-' + str(i) + '.png')
                     self.noneFilter(im,i,top_line_value,bottom_line_value)
                 toGIF.gifIt(self.filenames)
+            elif my_text == 'Thumbnail':
+                for i in range(0,numberOfFrames):
+                    im = Image.open('frames/source-' + str(i) + '.png')
+                    im = self.thumbnail(im,i,top_line_value,bottom_line_value)
+                toGIF.gifIt(self.filenames)
+
         print("GIF CREATED!!")
         #self.v2_layout.removeWidget(self.movie_screen)
         item = self.v2_layout.takeAt(1)
         item.widget().deleteLater()
 
-
-        self.movie_screen = QLabel()
-        # Make the label fit the gif
-        self.movie_screen.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.movie_screen.setAlignment(Qt.AlignCenter)
-        # Load the file into a QMovie
-        self.movie = QMovie('newGIF.gif', QByteArray(), self)
-        # Add the QMovie object to the label
-        self.movie.setCacheMode(QMovie.CacheAll)
-        self.movie.setSpeed(100)
-        self.movie_screen.setMovie(self.movie)
-        self.movie.start()
+#///////////////////////////////////////////////////////////////////////////////////////////
+        self.loadGIF("newGIF.gif")
+#///////////////////////////////////////////////////////////////////////////////////////////
 
         self.v2_layout.addWidget(self.movie_screen)
         #self.v_layout.addLayout(self.v2_layout)
         self.setLayout(self.v_layout)
-#            elif my_text == 'Thumbnail':
-#                for i in range(0,numberOfFrames):
-#                    im = Image.open('frames/source-' + str(i) + '.png')
-#                    im = self.thumbnail(im,i)
+
 
 
 app = QApplication(sys.argv)
-main = Window()
+main = editWindow()
 sys.exit(app.exec_())
