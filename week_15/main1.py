@@ -1,3 +1,8 @@
+#CST 205 - Mian file
+#
+# 
+#
+ 
 import gifextract
 import toGIF
 import addText

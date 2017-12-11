@@ -320,12 +320,12 @@ class Camera(QtWidgets.QMainWindow):
 
 
 
-def main():
-	app = QtWidgets.QApplication(sys.argv)
-	myapp = Camera()
-	myapp.show()
-	sys.exit(app.exec_())
+# def main():
+# 	app = QtWidgets.QApplication(sys.argv)
+# 	myapp = Camera()
+# 	myapp.show()
+# 	sys.exit(app.exec_())
 
-if __name__ == "__main__":
-	main()
+# if __name__ == "__main__":
+# 	main()
  

@@ -93,15 +93,15 @@ class SearchGroupBox(QWidget):
 #############################
 my_app = QApplication(sys.argv)
 a_window = MyWindow()
-
 a_window.show()
+
 #This code below opens camera. It opens in a new window. 
 # Idont know why after I take a pic, the camera widget wont close.
-my_cam = Camera()
+# my_cam = Camera()
 # my_cam.show()
-
-
 sys.exit(my_app.exec_())
+
+
 
 
 #
