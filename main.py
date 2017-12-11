@@ -25,7 +25,7 @@ import math
 
 my_list = ["None", "Sepia", "Negative", "Grayscale","Thumbnail"]
 term =""
-
+file =""
 
 # The search term being sent to the API. Gifs related to this will be searched.
 q = 'otter'
@@ -251,7 +251,11 @@ class APIResults(QWidget):
     # This function is called on click to modify_button
     @pyqtSlot()
     def on_click(self):
-        print(self.combo_box.currentText())
+        global file
+        file ="api_results/result"+self.combo_box.currentText()+".gif"
+        print(file)
+        self.new_win = editWindow()
+        self.new_win.show()
 
 
 
@@ -299,9 +303,9 @@ class editWindow(QWidget):
         self.submit_btn = QPushButton("Create", self)
 
         self.my_label2 = QLabel(self)
-
+        print(f"the file name: {file}")
 #///////////////////////////////////////////////////////////////////////////////////////////
-        self.loadGIF("source.gif")
+        self.loadGIF(file)
 #///////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -450,7 +454,7 @@ class editWindow(QWidget):
         item.widget().deleteLater()
 
 #///////////////////////////////////////////////////////////////////////////////////////////
-        self.loadGIF("loading.gif")
+        #self.loadGIF("loading.gif")
 #///////////////////////////////////////////////////////////////////////////////////////////
 
         self.v2_layout.addWidget(self.movie_screen)
@@ -460,12 +464,12 @@ class editWindow(QWidget):
         top_line_value = self.my_line_edit.text()
         bottom_line_value = self.my_line_editBottom.text()
 
-        numberOfFrames = gifextract.processImage('source.gif')
+        numberOfFrames = gifextract.processImage(file)
         my_text = self.my_combo_box.currentText()
         if my_text != 'Pick a filter':
             if my_text == 'Grayscale':
                 for i in range(0,numberOfFrames):
-                    im = Image.open('frames/source-' + str(i) + '.png')
+                    im = Image.open('frames/'+file +"-"+ str(i) + '.png')
                     self.grayscale(im,i,top_line_value,bottom_line_value)
                 toGIF.gifIt(self.filenames)
             elif my_text == 'Negative':
@@ -480,7 +484,7 @@ class editWindow(QWidget):
                 toGIF.gifIt(self.filenames)
             elif my_text == 'None':
                 for i in range(0,numberOfFrames):
-                    im = Image.open('frames/source-' + str(i) + '.png')
+                    im = Image.open('frames/'+file[11:-4] +"-"+ str(i) + '.png')
                     self.noneFilter(im,i,top_line_value,bottom_line_value)
                 toGIF.gifIt(self.filenames)
             elif my_text == 'Thumbnail':
@@ -511,8 +515,6 @@ class MainWindow(QWidget):
         self.submit_btn = QPushButton("Search", self)
         self.submit_btn.clicked.connect(self.showResults)
         self.v_layout.addWidget(self.submit_btn)
-
-
         self.setLayout(self.v_layout)
 
 
