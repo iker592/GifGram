@@ -1,11 +1,23 @@
+# Course: CST 205 - Multimedia Design & Programming
+# Title: CST 205 Final Project - Team 6: GifGram
+# Authors: Iker Redondo Pedroce, Juan Gallaga-Chavez, Albert Jozsa-Kiraly
+# Date: 12/10/2017
+
+# This is a Python program which opens a window, so the user can search for gifs 
+# related to a specific term, and the program uses the Giphy API to find gifs to the user. 
+# By default, always 4 gifs are returned and displayed in a new window. 
+# The user can choose the number of the gif and click on the "Modify" button. 
+# Afterwards, a new window pops up where the user can add text to the top and 
+# bottom of the gif, and apply a filter to the gif. 
+# The modified gif is automatically saved in the project folder.
+
 import gifextract
 import toGIF
 import addText
 import sys
-from PyQt5 import *
 import time
-
 import requests
+from PyQt5 import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -13,11 +25,10 @@ import os
 import imageio
 import math
 from urllib import request
-import os
 from PIL import Image
 from PIL.ImageQt import ImageQt
-import math
 
+# The gif filter options
 my_list = ["None", "Sepia", "Negative", "Grayscale","Thumbnail"]
 
 # The number of gifs to be returned to the user
@@ -41,6 +52,7 @@ def thumbnail(photo):
 # This function downloads the gifs returned by the API call.
 def download_gifs(q, limit):
 
+	# First, make the API call to get the gifs
 	# This is the search endpoint with the API key included. The response will be in JSON format.
 	endpoint = "https://api.giphy.com/v1/gifs/search?api_key=lS0mFdGz0h6K8qPVK77kOM2atN4vQppp&q=" + str(q) + "&limit=" + str(limit) + "&offset=0&rating=G&lang=en"
 	response = requests.get(endpoint)
@@ -130,7 +142,8 @@ def construct_gif(list_of_frames, new_name):
         images.append(imageio.imread(file))
     imageio.mimsave(new_name, images)               
 
-
+# This function calls the functions which make the API call, get the frames of the gifs, and construct the thumbnail gifs.
+# This is the main workflow of getting the gifs from the Giphy API.
 def callAPI(q, limit):
 
     # First, download each gif returned by the API.
@@ -182,9 +195,7 @@ class APIResults(QWidget):
         
         # This list will keep track of each gif's number in order. These numbers will be used in the combo box, so that the user can choose a gif for modification.
 		image_number_list = []
-		
-		#print("Limit:" + str(limit))
-         
+		         
         # Loop and display each thumbnail gif
 		for i in range(0, limit, 1):
         
@@ -252,6 +263,7 @@ class APIResults(QWidget):
 		self.new_win = editWindow()
 		self.new_win.show()
 
+# This is the window where the user can edit a gif
 class editWindow(QWidget):
 
 	filenames = []
@@ -265,8 +277,10 @@ class editWindow(QWidget):
         # Make the label fit the gif
 		self.movie_screen.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 		self.movie_screen.setAlignment(Qt.AlignCenter)
+		
         # Load the file into a QMovie
 		self.movie = QMovie(fileName, QByteArray(), self)
+		
         # Add the QMovie object to the label
 		self.movie.setCacheMode(QMovie.CacheAll)
 		self.movie.setSpeed(100)
@@ -280,11 +294,9 @@ class editWindow(QWidget):
 
 		self.my_line_edit = QLineEdit(self)
 		self.my_line_edit.setPlaceholderText("Enter some text")
-        #self.my_line_edit.setGeometry(QtCore.QRect(0, 0, 0, 0))
 
 		self.my_line_editBottom = QLineEdit(self)
 		self.my_line_editBottom.setPlaceholderText("Enter some text")
-        #self.my_line_editBottom.setGeometry(QtCore.QRect(260, 380, 50, 25))
 
 		self.my_combo_box = QComboBox()
 		self.my_combo_box.addItems(my_list)
@@ -300,12 +312,10 @@ class editWindow(QWidget):
 		h_layout = QHBoxLayout()
 		h_layout.addWidget(self.my_label)
 		h_layout.addWidget(self.my_line_edit)
-        #h_layout.addWidget(self.my_combo_box)
 
 		h2_layout = QHBoxLayout()
 		h2_layout.addWidget(self.my_labelBottom)
 		h2_layout.addWidget(self.my_line_editBottom)
-        #h2_layout.addWidget(self.my_combo_box)
 
 		h3_layout = QHBoxLayout()
 		h3_layout.addWidget(self.my_labelPick)
@@ -315,11 +325,7 @@ class editWindow(QWidget):
 		self.v2_layout.addWidget(self.submit_btn)
 		self.v2_layout.addWidget(self.movie_screen)
 
-
-
-
 		self.v_layout = QVBoxLayout()
-
 		self.v_layout.addWidget(self.my_label2)
 
 		self.v_layout.addLayout(h_layout)
@@ -341,23 +347,25 @@ class editWindow(QWidget):
 		self.setGeometry(450, 200, 600, 400)
 		self.show()
 
+	# Produces the negative of an image
 	def negative(self,picture,i,top_line_value,bottom_line_value):
 		new_list = []
 		for p in picture.getdata():
 			temp = (255-p[0], 255-p[1], 255-p[2])
 			new_list.append(temp)
 		picture.putdata(new_list)
-        #print(picture.width)
 		picture = addText.add(picture,top_line_value,bottom_line_value,picture.width,picture.height)
 		picture.save("modifiedFrames/newFrame-"+str(i)+".png")
 		self.filenames.append("modifiedFrames/newFrame-"+str(i)+".png")
 
+	# Saves a gif which does not need a filter (if the user chose to apply no filter to the modified gif).
 	def noneFilter(self,picture,i,top_line_value,bottom_line_value):
 
 		picture = addText.add(picture,top_line_value,bottom_line_value,picture.width,picture.height)
 		picture.save("modifiedFrames/newFrame-"+str(i)+".png")
 		self.filenames.append("modifiedFrames/newFrame-"+str(i)+".png")
 
+	# Produces a sepia image
 	def grayscaleSepia(self,picture,i,top_line_value,bottom_line_value):
 		new_list = []
 		for p in picture.getdata():
@@ -402,6 +410,7 @@ class editWindow(QWidget):
 		picture.save("modifiedFrames/newFrame-"+str(i)+".png")
 		self.filenames.append("modifiedFrames/newFrame-"+str(i)+".png")
 
+	# Produces the thumbnail of an image
 	def thumbnail(self,picture,i,top_line_value,bottom_line_value):
 		s = 2
 		canvas = Image.new("RGB", (math.ceil(picture.width/s), math.ceil(picture.height/s)), "white")
@@ -418,6 +427,7 @@ class editWindow(QWidget):
 		picture.save("modifiedFrames/newFrame-"+str(i)+".png")
 		self.filenames.append("modifiedFrames/newFrame-"+str(i)+".png")
 
+	# Produces the grayscale of an image
 	def grayscale(self,picture,i,top_line_value,bottom_line_value):
 		new_list = []
 		for p in picture.getdata():
@@ -436,17 +446,16 @@ class editWindow(QWidget):
 		my_text = self.my_combo_box.currentText()
 		print(f'\n{my_text} filter selected')
 
+	# This function is called when the "Create" button is pressed in the Edit Window. 
+	# The selected modification is applied to the gif.
 	@pyqtSlot()
 	def on_click(self):
 		item = self.v2_layout.takeAt(1)
 		item.widget().deleteLater()
-		
-		#self.loadGIF("loading.gif")
 
 		self.v2_layout.addWidget(self.movie_screen)
-        #self.v_layout.addLayout(self.v2_layout)
 		self.setLayout(self.v_layout)
-        #time.sleep(5.5)
+
 		top_line_value = self.my_line_edit.text()
 		bottom_line_value = self.my_line_editBottom.text()
 
@@ -458,26 +467,31 @@ class editWindow(QWidget):
 					im = Image.open('frames/'+file[11:-4] +"-"+ str(i) + '.png')
 					self.grayscale(im,i,top_line_value,bottom_line_value)
 				toGIF.gifIt(self.filenames)
+				self.filenames.clear()
 			elif my_text == 'Negative':
 				for i in range(0,numberOfFrames):
 					im = Image.open('frames/'+file[11:-4] +"-"+ str(i) + '.png')
 					self.negative(im,i,top_line_value,bottom_line_value)
 				toGIF.gifIt(self.filenames)
+				self.filenames.clear()
 			elif my_text == 'Sepia':
 				for i in range(0,numberOfFrames):
 					im = Image.open('frames/'+file[11:-4] +"-"+ str(i) + '.png')
 					self.sepia_tint(im,i,top_line_value,bottom_line_value)
 				toGIF.gifIt(self.filenames)
+				self.filenames.clear()
 			elif my_text == 'None':
 				for i in range(0,numberOfFrames):
 					im = Image.open('frames/'+file[11:-4] +"-"+ str(i) + '.png')
 					self.noneFilter(im,i,top_line_value,bottom_line_value)
 				toGIF.gifIt(self.filenames)
+				self.filenames.clear()
 			elif my_text == 'Thumbnail':
 				for i in range(0,numberOfFrames):
 					im = Image.open('frames/'+file[11:-4] +"-"+ str(i) + '.png')
 					im = self.thumbnail(im,i,top_line_value,bottom_line_value)
 				toGIF.gifIt(self.filenames)
+				self.filenames.clear()
 				
 		item = self.v2_layout.takeAt(1)
 		item.widget().deleteLater()
@@ -487,6 +501,8 @@ class editWindow(QWidget):
 		self.v2_layout.addWidget(self.movie_screen)
 		self.setLayout(self.v_layout)
 		
+# This is the window the user sees after launching the application.
+# The main logo is displayed. A search box is provided where a search term can be entered.
 class MainWindow(QWidget):
 	def __init__(self):
 		super().__init__()
@@ -517,7 +533,7 @@ main.setAutoFillBackground(True)
 p = main.palette()
 p.setColor(main.backgroundRole(), Qt.cyan)
 main.setPalette(p)
-main.setWindowTitle("GifGram\u2122")
+main.setWindowTitle("GifGram\u2122 Search Window")
 main.setGeometry(450, 200, 600, 400)
 main.show()
 sys.exit(app.exec_())
