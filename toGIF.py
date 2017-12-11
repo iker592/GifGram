@@ -6,5 +6,5 @@ def gifIt(filenames):
 	for filename in filenames:
 	    images.append(imageio.imread(filename))
 	imageio.mimsave('newGIF.gif', images)
-	for f in filenames:
-		os.remove(f)
+	#for f in filenames:
+		#os.remove(f)

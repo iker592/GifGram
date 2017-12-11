@@ -29,7 +29,7 @@ from PIL import Image
 from PIL.ImageQt import ImageQt
 
 # The gif filter options
-my_list = ["None", "Sepia", "Negative", "Grayscale","Thumbnail"]
+my_list = ["None", "Sepia", "Negative", "Grayscale"]
 
 # The number of gifs to be returned to the user
 limit = 4
@@ -485,13 +485,7 @@ class editWindow(QWidget):
 					im = Image.open('frames/'+file[11:-4] +"-"+ str(i) + '.png')
 					self.noneFilter(im,i,top_line_value,bottom_line_value)
 				toGIF.gifIt(self.filenames)
-				self.filenames.clear()
-			elif my_text == 'Thumbnail':
-				for i in range(0,numberOfFrames):
-					im = Image.open('frames/'+file[11:-4] +"-"+ str(i) + '.png')
-					im = self.thumbnail(im,i,top_line_value,bottom_line_value)
-				toGIF.gifIt(self.filenames)
-				self.filenames.clear()
+				self.filenames.clear()	
 				
 		item = self.v2_layout.takeAt(1)
 		item.widget().deleteLater()
