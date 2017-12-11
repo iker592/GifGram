@@ -1,5 +1,7 @@
 # CST 205 Final Project - GifGram
 
+## Team 6
+
 ### Team members: Iker Redondo Pedroche, Juan Gallaga-Chavez, Albert Jozsa-Kiraly
 
 ### Class: CST 205 - Multimedia Design & Programming
